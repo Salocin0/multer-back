@@ -1,10 +1,19 @@
 import multer from "multer";
+import { __dirname } from '../dirname.js';
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __dirname + "/public");
+    console.log(file)
+    if (file.originalname.includes('profileImage')) {
+      cb(null, __dirname + "/public/uploads/profiles/");
+    } else if (file.originalname.includes('productImage')) {
+      cb(null, __dirname + "/public/uploads/products/");
+    } else {
+      cb(null, __dirname + "/public/uploads/documents/");
+    }
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 

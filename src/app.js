@@ -25,7 +25,7 @@ import { connectSocketServer } from './utils/connect-socket.js';
 import enviromentConfig from './config/enviroment.config.js';
 import { testChatRouter } from './routes/test-chat.router.js';
 import { recoverControler } from './controllers/recover.controller.js';
-import swaggerUiExpress from "swagger-Ui-Express";
+import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from "swagger-jsdoc";
 
 const app = express();
@@ -46,7 +46,7 @@ const swaggerOptions = {
 };
 
 const specs = swaggerJSDoc(swaggerOptions);
-app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+app.use("/apidocs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

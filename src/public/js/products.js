@@ -1,4 +1,4 @@
-import { selectedLogger } from "../../utils/logger";
+import { selectedLogger } from "../../utils/logger.js";
 let cartid = '';
 
 document.addEventListener('click', function (event) {

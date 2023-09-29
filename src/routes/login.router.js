@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import { DTOsession } from '../DAO/DTO/session.dto.js';
 import { selectedLogger } from '../utils/logger.js';
+import { userService } from '../services/users.service.js';
 
 export const loginRouter = express.Router();
 
@@ -21,6 +22,8 @@ loginRouter.post('/login', passport.authenticate('login', { failureRedirect: '/e
     };
   }
 
+  const userupdated = await userService.updatelastConection(user._id)
+
   req.session.user = {
     email: req.user.email,
     firstName: req.user.firstName,
@@ -32,7 +35,9 @@ loginRouter.post('/login', passport.authenticate('login', { failureRedirect: '/e
   return res.redirect('/vista/products');
 });
 
-loginRouter.get('/logout', (req, res) => {
+loginRouter.get('/logout', async (req, res) => {
+  const user = req.user;
+  const userupdated = await userService.updatelastConection(user._id)
   req.session.destroy((err) => {
     if (err) {
       selectedLogger.error('Error al cerrar sesión:', err);

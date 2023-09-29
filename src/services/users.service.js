@@ -48,9 +48,9 @@ class UserService {
     return user;
   }
 
-  async createUser(firstName, lastName, email,age,password) {
+  async createUser(firstName, lastName, email, age, password) {
     this.validatePostUser(firstName, lastName, email);
-    const userCreated = await modelUsuario.createUser(firstName, lastName, email,age,password);
+    const userCreated = await modelUsuario.createUser(firstName, lastName, email, age, password);
     return userCreated;
   }
 
@@ -68,17 +68,50 @@ class UserService {
 
   async changerol(id) {
     let userdb = await this.getOneUser(id);
-    console.log(userdb)
-    if (userdb.rol === "premium") {
-      userdb.rol = "user";
-    } else if (userdb.rol === "user") {
-      userdb.rol = "premium";
-    }else{
-      userdb.rol="user"
+    console.log(userdb);
+    if (userdb.rol === 'premium') {
+      userdb.rol = 'user';
+    } else if (userdb.rol === 'user') {
+      if (
+        userdb.documents.some((document) => document.name.includes('Identificacion')) &&
+        userdb.documents.some((document) => document.name.includes('Comprobante de domicilio')) &&
+        userdb.documents.some((document) => document.name.includes('Comprobante de estado de cuenta'))
+      ) {
+        userdb.rol = 'premium';
+      } else {
+        return false;
+      }
+    } else {
+      userdb.rol = 'user';
     }
-    console.log(userdb)
+    console.log(userdb);
     userdb = await this.updateUser(id, userdb.firstName, userdb.lastName, userdb.email, userdb.rol);
     return userdb;
+  }
+
+  async documents(uid, files) {
+    const user = await modelUsuario.getOneUser(uid);
+
+    if (user) {
+      const userDocuments = [];
+      console.log(files);
+      for (const file of files) {
+        const document = {
+          name: file.originalname,
+          reference: file.path,
+        };
+        user.documents.push(document);
+        userDocuments.push(document);
+      }
+      await user.save();
+      return userDocuments;
+    }
+  }
+
+  async updatelastConection(id) {
+    const user = await modelUsuario.getOneUser(id);
+    user.lastconnection = new Date();
+    user.save();
   }
 }
 

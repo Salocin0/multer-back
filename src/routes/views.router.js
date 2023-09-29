@@ -1,12 +1,15 @@
 import express from 'express';
 import { isAmdin, isUser } from '../middlewares/auth.js';
+import { userService } from '../services/users.service.js';
 export const viewsRouter = express.Router();
 
 viewsRouter.get('', (req, res) => {
   return res.redirect('/login');
 });
 
-viewsRouter.get('/logout', (req, res) => {
+viewsRouter.get('/logout', async (req, res) => {
+  const user = req.user;
+  const userupdated = await userService.updatelastConection(user._id)
   req.session.destroy((err) => {
     if (err) {
       return res.render('error-page', { msg: 'no se pudo cerrar la session' });
